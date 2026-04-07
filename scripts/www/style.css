@@ -1,0 +1,1207 @@
+/* 基础样式 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  height: 100vh;
+  overflow: hidden;
+  font-family: Arial, sans-serif;
+}
+
+/* 顶部状态栏 */
+.status-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50px;
+  background: rgba(16, 24, 39, 0.95);
+  backdrop-filter: blur(10px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 15px;
+  color: white;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.connection-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+#roomIdInput {
+  width: 140px;
+  padding: 8px 10px;
+  border-radius: 4px;
+  border: none;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+#stat-button {
+  margin-right: 5px;
+  padding: 8px 9px; /* 稍大的内边距更饱满 */
+  cursor: pointer;
+  background-color: #4caf50a3; 
+  color: white; /* 白色文字 */
+  border: none; /* 去掉默认边框 */
+  border-radius: 4px; /* 圆角更柔和 */
+  font-size: 13px;
+  transition: background-color 0.2s; /* 过渡动画 */
+
+
+  font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+/* 悬停效果 */
+#stat-button:hover {
+  background-color: #1cd20e; /* 加深颜色 */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 轻微阴影 */
+}
+/* 点击效果 */
+#stat-button:active {
+  background-color: #f443369e; /* 进一步加深 */
+}
+
+/* 无人机状态显示 - 调整后适应status-bar */
+.drone-status {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 14px;
+  background: transparent;
+  flex-wrap: wrap;
+  /* 保持原有高度适应两行 */
+  align-content: center;
+  height: auto;
+  padding: 0;
+  color: #3df700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 60%;
+}
+
+.status-line {
+  /* 每行占满整宽，强制换行 */
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  font-size: 14px;
+}
+
+/* 控制按钮组 */
+.control-buttons-group {
+  display: flex;
+  gap: 10px;
+  padding: 2px 10px;
+}
+
+.control-btn.status-btn {
+  padding: 8px 9px;
+  font-size: 13px;
+  /* font-size: 28px; */
+  font-weight: 600;
+  letter-spacing: 2px;
+
+  color: #f2feff;
+
+
+
+  font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
+/* 主内容区 */
+.main-container {
+  position: fixed;
+  top: 50px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 大窗口区域 */
+.large-view {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+
+/* 大窗口容器 - 基础样式 */
+.video-large,
+.map-large {
+  width: 100%;
+  height: 100%;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* 小窗口区域 - 调整到右上角 */
+.small-view {
+  position: fixed;
+  top: 62px; /* 状态栏下方 */
+  right: 60px;
+  width: 260px;
+  height: 150px;
+  z-index: 600;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* 视频容器 */
+.video-container {
+  width: 100%;
+  height: 100%;
+  background: #000;
+  position: relative;
+}
+
+#remote-video,
+#small-remote-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* 地图容器 */
+#map-container,
+#small-map-container {
+  width: 100%;
+  height: 100%;
+}
+
+/* 控制区域 */
+.controls-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 1px;
+  z-index: 950;
+  transition: all 0.3s ease;
+}
+
+.video-controls {
+  display: none;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.map-controls {
+  display: none;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+.control-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 0;
+  clip-path: polygon(
+    10px 0,
+    100% 0,
+    100% calc(100% - 10px),
+    calc(100% - 10px) 100%,
+    0 100%,
+    0 10px
+  );
+  background: #0000004f;
+  color: #000;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+  position: relative;
+}
+
+.control-btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+        135deg,
+        transparent 6px,
+        rgba(0, 255, 255, 0.8) 6px,
+        rgba(0, 255, 255, 0.8) 8px,
+        transparent 8px
+      )
+      top left,
+    linear-gradient(to right, rgba(0, 255, 255, 0.8), rgba(0, 255, 255, 0.8))
+      top left / 100% 1px,
+    linear-gradient(to bottom, rgba(0, 255, 255, 0.8), rgba(0, 255, 255, 0.8))
+      top right / 1px 100%,
+    linear-gradient(
+        -45deg,
+        transparent 6px,
+        rgba(0, 255, 255, 0.8) 6px,
+        rgba(0, 255, 255, 0.8) 8px,
+        transparent 8px
+      )
+      bottom right,
+    linear-gradient(to left, rgba(0, 255, 255, 0.8), rgba(0, 255, 255, 0.8))
+      bottom left / 100% 1px,
+    linear-gradient(to top, rgba(0, 255, 255, 0.8), rgba(0, 255, 255, 0.8))
+      bottom left / 1px 100%;
+  background-repeat: no-repeat;
+  pointer-events: none;
+}
+/* 悬停效果 */
+.control-btn:hover {
+  background-color: #1cd20e; /* 加深颜色 */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 轻微阴影 */
+}
+/* 点击效果 */
+.control-btn:active {
+  background-color: #f443369e; /* 进一步加深 */
+}
+.joystick-area {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 10px;
+}
+
+/* 摇杆样式 */
+.joystick-container {
+  width: 150px;
+  height: 150px;
+  position: relative;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  overflow: hidden;
+}
+
+.joystick-center {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: rgba(0, 255, 136, 0.3);
+}
+
+.joystick {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: linear-gradient(145deg, #00ff88, #00ccff);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  cursor: pointer; /* 鼠标悬停时显示手形图标 */
+  z-index: 10;
+}
+
+.joystick:active {
+  cursor: grabbing;
+}
+
+.joystick-label {
+  position: absolute;
+  bottom: 105px;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  color: #3df700; /* 摇杆标签黄色显示 */
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.joystick-values {
+  position: absolute;
+  top: 10px;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  color: #3df700; /* 摇杆标签绿色显示 */
+  font-size: 12px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+/* HUD元素 */
+.hud-elements {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  color: #3df700;
+  padding: 15px;
+}
+
+/* 航线执行面板 */
+#execution-panel {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(16, 24, 39, 0.95);
+  backdrop-filter: blur(10px);
+  padding: 20px;
+  border-radius: 12px;
+  z-index: 1001;
+  display: none;
+  color: #00ccff;
+  width: 90%;
+  max-width: 350px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #95c8d5;
+  color: #0f0604;
+}
+
+.close-panel {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.execute-btn {
+  width: 100%;
+  padding: 10px;
+  background: linear-gradient(145deg, #00ff88, #00ccff);
+  color: #000;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* 搜索框 */
+.search-container {
+  position: absolute;
+  top: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 5px;
+  z-index: 900;
+  display: none;
+}
+
+#search-input {
+  padding: 8px 12px;
+  border-radius: 4px;
+  border: none;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+#search-button {
+  padding: 8px 12px;
+  border-radius: 4px;
+  border: none;
+  background: linear-gradient(145deg, #00ff88, #00ccff);
+  color: #000;
+  cursor: pointer;
+}
+
+/* 状态文字样式 */
+#status {
+  color: #ffd700; /* 等待手柄连接文字黄色显示 */
+  text-align: center;
+  font-weight: bold;
+  padding: 5px 0;
+  cursor: pointer; /* 鼠标悬停时显示手形图标 */
+}
+
+/* 显示状态切换 */
+.show-video-large .video-large {
+  display: block;
+  transform: scale(1);
+  opacity: 1;
+}
+
+.show-video-large .map-large {
+  display: none;
+}
+
+.show-video-large .video-controls {
+  display: flex;
+}
+
+.show-video-large .map-controls {
+  display: none;
+}
+
+.show-video-large .small-map {
+  display: block;
+}
+
+.show-video-large .small-video {
+  display: none;
+}
+
+.show-map-large .video-large {
+  display: none;
+}
+
+.show-map-large .map-large {
+  display: block;
+  transform: scale(1);
+  opacity: 1;
+}
+
+.show-map-large .video-controls {
+  display: none;
+}
+
+.show-map-large .map-controls {
+  display: flex;
+}
+
+.show-map-large .small-map {
+  display: none;
+}
+
+.show-map-large .small-video {
+  display: block;
+}
+
+.show-map-large .search-container {
+  display: flex;
+}
+
+/* 顶部控制栏 */
+.top-controls {
+  position: absolute;
+  top: 20px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  z-index: 999;
+  padding: 0 20px;
+}
+
+/* 右侧信息面板 */
+.right-panel {
+  position: absolute;
+  top: 80px;
+  right: 20px;
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* 飞行数据显示区域 */
+.flight-data {
+  background: rgba(16, 24, 39, 0.7);
+  border-radius: 8px;
+  padding: 10px;
+  color: #3df700;
+  font-size: 14px;
+}
+
+/* 调整视频面板位置 */
+.video-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* 调整控制按钮面板 */
+.control-panel {
+  position: absolute;
+  top: 80px;
+  left: 20px;
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* 调整搜索框和连接状态的宽度 */
+#search-container,
+#stat-container {
+  position: static;
+  transform: none;
+  width: auto;
+}
+
+/* 调整无人机模式显示 */
+#vehicleStatus {
+  position: static;
+  background: rgba(151, 202, 218, 0.48);
+  padding: 8px 12px;
+  border-radius: 4px;
+  margin: 0;
+}
+
+/* 调试按钮位置调整 */
+#debug-button {
+  margin: 0;
+}
+
+/* 添加到style.css中 */
+.video-switch-buttons {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  opacity: 0.8;
+  /* 添加以下属性确保按钮不会导致页面滚动 */
+  pointer-events: auto;
+  user-select: none;
+}
+
+.video-switch-btn {
+  width: 80px;
+  padding: 8px 5px;
+  background-color: rgba(0, 198, 239, 0.3);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s;
+
+
+  font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
+
+.video-switch-btn:hover {
+  background-color: rgba(0, 244, 241);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 轻微阴影 */
+}
+
+/* 仅在大视频窗口显示时显示按钮 */
+.show-map-large .video-switch-buttons {
+  display: none;
+}
+
+/* 允许视频切换按钮接收点击事件 */
+.video-switch-btn {
+  pointer-events: auto; /* 覆盖父元素的pointer-events: none */
+}
+
+/* 在style.css中添加以下样式，默认隐藏摇杆区域 */
+.joystick-area {
+  display: none;
+}
+
+/* 显示摇杆区域的样式 */
+.show-joystick .joystick-area {
+  display: flex;
+}
+
+.drone-telemetry {
+  margin-top: 10px;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 5px;
+  color: white;
+  font-size: 12px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 5px;
+}
+
+.drone-telemetry div {
+  margin: 0;
+  padding: 2px 0;
+}
+
+.drone-telemetry span {
+  font-weight: bold;
+  color: #4caf50;
+}
+
+/* 拍照录像按钮容器 - 中间靠右侧定位 */
+.camera-controls {
+  position: absolute;
+  /* 水平位置：中间偏右（距离右侧20%宽度处），可根据需要调整 */
+  left: 95%;
+  /* 垂直居中 */
+  top: 48%;
+  transform: translateY(-50%);
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  /* 增大按钮间距，更美观 */
+  gap: 20px;
+  opacity: 0.9;
+  pointer-events: auto;
+  user-select: none;
+}
+
+/* 圆形粉红色按钮样式 */
+.camera-btn {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%; /* 圆形 */
+  background-color: #bd4882a3; /* 粉红色 */
+  border: 2px solid rgba(225, 13, 13, 0.3); /* 浅色边框增加层次感 */
+  color: white; /* 文字白色更清晰 */
+  font-size: 13px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2); /* 轻微阴影增强立体感 */
+}
+
+/* 悬停效果优化 */
+.camera-btn:hover {
+  background-color: #ed1010; /* 加深颜色 */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 轻微阴影 */
+}
+
+/* 地图模式下隐藏按钮 */
+.show-map-large .camera-controls {
+  display: none;
+}
+
+/* 设置对话框样式 */
+
+.settings-content {
+  background-color: #ffffff78;
+  padding: 20px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 300px;
+}
+
+.settings-content h3 {
+  margin-top: 0;
+  text-align: center;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 8px;
+  box-sizing: border-box;
+  color: #333; /* 深灰色文字，确保可见 */
+  background-color: #fff; /* 白色背景 */
+  border: 1px solid #ddd; /* 增加边框，让输入框更明显 */
+}
+
+.settings-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.save-btn {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+}
+
+.cancel-btn {
+  background-color: #f44336;
+  color: white;
+  border: none;
+}
+
+.settings-button {
+  margin-right: 5px;
+  padding: 8px 9px; /* 稍大的内边距更饱满 */
+  cursor: pointer;
+  background-color: #e91e6399; 
+  color: white; /* 白色文字 */
+  border: none; /* 去掉默认边框 */
+  border-radius: 4px; /* 圆角更柔和 */
+  font-size: 13px;
+  transition: background-color 0.2s; /* 过渡动画 */
+
+
+  font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
+/* 悬停效果 */
+.settings-button:hover {
+  background-color: #97023599; /* 加深颜色 */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 轻微阴影 */
+}
+
+/* 点击效果 */
+.settings-button:active {
+  background-color: #0a34a1; /* 进一步加深 */
+}
+/* HUD元素	 */
+#speed-data {
+  position: absolute;
+  top: 49%;
+  left: 65%;
+  width: 2%;
+  height: 10%;
+  color: #3df700;
+  padding: 8px;
+}
+#alt-data {
+  position: absolute;
+  top: 49%;
+  left: 32%;
+  width: 2%;
+  height: 10%;
+  color: #3df700;
+  padding: 8px;
+}
+
+#lon-data {
+  position: absolute;
+  top: 92%;
+  left: 75%;
+  width: 14%;
+  height: 10%;
+  color: #3df500;
+  padding: 8px;
+}
+#lat-data {
+  position: absolute;
+  top: 92%;
+  left: 87%;
+  width: 14%;
+  height: 10%;
+  color: #3df500;
+  padding: 8px;
+}
+#mobtim-data {
+  position: absolute;
+  top: 92%;
+  left: 5%;
+  width: 30%;
+  height: 10%;
+  color: #3df500;
+  padding: 8px;
+}
+#gps-data {
+  position: absolute;
+  top: 92%;
+  left: 70%;
+  width: 10%;
+  height: 10%;
+  color: #3df500;
+  padding: 8px;
+}
+#batt-data {
+  position: absolute;
+  top: 0%;
+  left: 95%;
+  width: 10%;
+  height: 10%;
+  color: #3df500;
+  padding: 8px;
+}
+#sd-storage {
+  position: absolute;
+  top: 2%;
+  left: 95%;
+  width: 7%;
+  height: 10%;
+  color: #3df500;
+  padding: 8px;
+}
+#jiguang-data {
+  position: absolute;
+  top: 92%;
+  left: 39%;
+  width: 23%;
+  height: 10%;
+  color: #3df500;
+  padding: 8px;
+}
+#video-status {
+  position: absolute;
+  top: 0%;
+  left: 0%;
+  width: 14%;
+  height: 10%;
+  color: #3df500;
+  padding: 8px;
+}
+
+.circle {
+  width: 8px; /* Adjust the size as needed */
+  height: 8px;
+  border-radius: 50%;
+
+  border: 2px solid #3df700; /* Adjust the border color and width as needed */
+  background-color: transparent; /* Ensure the circle is hollow */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+}
+.circle1 {
+  top: 35%;
+  left: 35%;
+  width: 30%; /* Adjust the size as needed */
+  height: 30%;
+  border-radius: 2%;
+  border: 1px dashed #3df700; /* Adjust the border color and width as needed */
+  background-color: transparent; /* Ensure the circle is hollow */
+  position: absolute;
+}
+.dashed-line {
+  width: 61%;
+  height: 2px;
+  background: repeating-linear-gradient(
+    90deg,
+    #3df700,
+    #3df700 10px,
+    #ffffff00 10px,
+    #ffffff00 25px
+  );
+  position: absolute;
+  top: 50%;
+  left: 20%;
+  transform-origin: center center;
+  transition: transform 0.1s, top 0.1s;
+}
+.amap-ui-control-position-tr {
+  top: 1px !important; /* 调整顶部距离 */
+  right: 1px !important; /* 调整右侧距离 */
+}
+
+.drone-settings-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 30%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+}
+
+.drone-settings-content {
+  background-color: #ffffff75;
+  padding: 5px 20px;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 250px;
+}
+
+.drone-settings-content h3 {
+  color: #6eef58;
+  margin-top: 0;
+  text-align: center;
+}
+
+.toggle-group {
+  color: #59f1d6;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+  border-bottom: 1px solid #eee;
+}
+
+.toggle-label {
+  font-weight: bold;
+}
+
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: 0.4s;
+  border-radius: 34px;
+}
+
+.toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: 0.4s;
+  border-radius: 50%;
+}
+
+input:checked + .toggle-slider {
+  background-color: #4caf50;
+}
+
+input:checked + .toggle-slider:before {
+  transform: translateX(26px);
+}
+
+.danger-btn {
+  background-color: #f4433661;
+  color: white;
+  border: none;
+}
+
+/* 添加启动图片覆盖层样式 */
+.splash-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999; /* 确保在最上层 */
+  cursor: pointer;
+  transition: opacity 0.5s ease;
+}
+
+.splash-image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+/* 设置对话框样式 */
+.settings-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 25%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+}
+
+.settings-content h3 {
+  margin-top: 0;
+  text-align: center;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  color: #59f1d6;
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+.settings-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.settings-btn {
+  padding: 8px 16px;
+  cursor: pointer;
+}
+/* 悬停效果 */
+.settings-btn:hover {
+  background-color: #1cd20e; /* 加深颜色 */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 轻微阴影 */
+}
+/* 点击效果 */
+.settings-btn:active {
+  background-color: #f443369e; /* 进一步加深 */
+}
+
+.save-btn {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+}
+
+.cancel-btn {
+  background-color: #f44336;
+  color: white;
+  border: none;
+}
+
+/* 添加到style.css或页面style区域 */
+#waypoint-list {
+  margin: 10px;
+  padding: 10px;
+  border: 1px solid #eee;
+  max-height: 200px;
+  overflow-y: auto;
+  font-size: 12px; /* 整体缩小字体 */
+}
+
+.waypoint-item {
+  margin: 5px 0;
+  padding: 8px;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  display: flex;
+  align-items: center;
+  gap: 0px;
+  cursor: move; /* 显示可拖动光标 */
+  transition: all 0.2s;
+}
+
+.waypoint-item:hover {
+  background-color: #f0f5ff;
+  border-color: #c9e0ff;
+}
+
+.waypoint-item.dragging {
+  opacity: 0.7;
+  background-color: #e6f7ff;
+  border-color: #91d5ff;
+}
+
+.waypoint-index {
+  min-width: 20px;
+  text-align: center;
+  font-weight: bold;
+  color: #1890ff;
+}
+
+.waypoint-coords {
+  flex: 1;
+  display: flex;
+  gap: 8px;
+  font-size: 11px; /* 经纬度字体更小 */
+  color: #333;
+}
+
+.waypoint-height-control {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+
+.waypoint-height {
+  width: 60px;
+  padding: 2px 5px;
+  font-size: 11px;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+}
+/* 添加到index.html的style区域 */
+#waypoint-list {
+  font-size: 13px;
+}
+
+.waypoint-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+  margin: 4px 0;
+  background: #f5f5f5;
+  border-radius: 4px;
+}
+
+.waypoint-coords {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.waypoint-height-control input {
+  width: 60px;
+  margin: 0 5px;
+  padding: 2px 4px;
+  font-size: 12px;
+}
+
+        /* 新增AI识别样式 */
+        .ai-detection-box {
+            position: absolute;
+            border: 2px solid red;
+            background: rgba(255, 0, 0, 0.2);
+            color: white;
+            font-size: 12px;
+			pointer-events: auto !important; /* 强制响应点击 */
+            z-index: 9999 !important; /* 最高层级 */
+        }
+        .ai-status {
+            position: absolute;
+            top: 50px;
+            right: 50%;
+            color: white;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 5px 10px;
+            border-radius: 4px;
+            z-index: 9999;
+        }
+
+.ai-detection-box:hover {
+    background-color: rgba(0, 255, 0, 0.4);
+    border-color: #00ff99;
+}
+/* 添加到全局CSS或页面<style>标签中 */
+#large-video-container {
+    pointer-events: auto !important; /* 强制启用事件穿透 */
+}
