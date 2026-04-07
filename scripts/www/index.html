@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>行空D10控制台 - 登录</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Consolas', 'Courier New', monospace;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #000a12;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            align-items: center;
+            /* 基础布局：移动端居中，PC偏右，通过媒体查询覆盖 */
+            justify-content: center;
+            padding: 20px;
+            /* 移动端左右内边距，防止内容贴边 */
+        }
+
+        /* 视频背景：全端适配，防止变形 */
+        .bottom-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            object-fit: cover;
+            z-index: -1;
+            opacity: 0.3;
+        }
+
+        /* 全息网格背景：全端适配 */
+        .grid-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-image: linear-gradient(rgba(18, 100, 163, 0.15) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(18, 100, 163, 0.15) 1px, transparent 1px);
+            background-size: 40px 40px;
+            z-index: 0;
+            animation: gridScroll 20s linear infinite;
+        }
+
+        @keyframes gridScroll {
+            0% {
+                background-position: 0 0;
+            }
+
+            100% {
+                background-position: 40px 40px;
+            }
+        }
+
+
+
+        @keyframes radarRotate {
+            0% {
+                transform: translate(-50%, -50%) rotate(0deg);
+            }
+
+            100% {
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
+        }
+
+        /* 数据流背景：全端适配 */
+        .data-stream {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .data-line {
+            position: absolute;
+            width: 2px;
+            background: linear-gradient(to bottom, transparent, #00d2ff, transparent);
+            animation: dataFlow 3s linear infinite;
+        }
+
+        @keyframes dataFlow {
+            0% {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            90% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(100vh);
+                opacity: 0;
+            }
+        }
+
+        /* 登录面板：核心响应式适配 */
+        .command-login {
+            position: relative;
+            z-index: 2;
+            /* 宽度自适应：移动端95%，平板80%，PC600px（最大宽度） */
+            width: clamp(95%, 80vw, 600px);
+            padding: clamp(25px, 5vw, 45px);
+            background: rgba(0, 20, 35, 0.9);
+            border: 1px solid #00d2ff;
+            border-radius: 8px;
+            box-shadow: 0 0 50px rgba(0, 210, 255, 0.3),
+                inset 0 0 20px rgba(0, 150, 200, 0.2);
+            backdrop-filter: blur(15px);
+        }
+
+        .system-status {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: clamp(15px, 3vw, 25px);
+            padding-bottom: clamp(10px, 2vw, 15px);
+            border-bottom: 1px solid rgba(0, 210, 255, 0.3);
+        }
+
+        .status-label {
+            color: #00d2ff;
+            font-size: clamp(10px, 1.5vw, 12px);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #00ff66;
+            animation: statusBlink 2s ease-in-out infinite;
+        }
+
+        @keyframes statusBlink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.3;
+            }
+        }
+
+        .system-time {
+            color: #00d2ff;
+            font-size: clamp(10px, 1.5vw, 12px);
+        }
+
+        .command-title {
+            text-align: center;
+            margin-bottom: clamp(20px, 4vw, 35px);
+            position: relative;
+        }
+
+        .command-title h1 {
+            color: #00d2ff;
+            font-size: clamp(18px, 3vw, 26px);
+            letter-spacing: 3px;
+            text-shadow: 0 0 15px rgba(0, 210, 255, 0.7);
+        }
+
+        .command-title p {
+            color: #00aacc;
+            font-size: clamp(10px, 1.5vw, 12px);
+            margin-top: 8px;
+            letter-spacing: 2px;
+        }
+
+        .terminal-input {
+            margin-bottom: clamp(15px, 2.5vw, 20px);
+            position: relative;
+        }
+
+        .terminal-input label {
+            display: block;
+            color: #00aacc;
+            font-size: clamp(12px, 2vw, 14px);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .terminal-input input {
+            width: 100%;
+            /* 高度自适应：移动端45px，PC55px */
+            height: clamp(45px, 7vw, 55px);
+            padding: 0 clamp(15px, 2vw, 20px);
+            background: rgba(0, 30, 50, 0.8);
+            border: 1px solid rgba(0, 210, 255, 0.4);
+            border-radius: 4px;
+            color: #00ff66;
+            font-size: clamp(14px, 2vw, 18px);
+            font-family: 'Consolas', monospace;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .terminal-input input:focus {
+            border-color: #00d2ff;
+            box-shadow: 0 0 20px rgba(0, 210, 255, 0.5);
+            background: rgba(0, 35, 60, 0.8);
+        }
+
+        .terminal-input input::placeholder {
+            color: #0088aa;
+            font-size: clamp(12px, 1.8vw, 14px);
+        }
+
+        .command-btn {
+            width: 100%;
+            /* 按钮高度自适应 */
+            height: clamp(50px, 7vw, 60px);
+            background: linear-gradient(to bottom, #0088aa, #005577);
+            border: 1px solid #00d2ff;
+            border-radius: 4px;
+            color: #fff;
+            font-size: clamp(14px, 2vw, 16px);
+            font-weight: bold;
+            letter-spacing: 2px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.2s ease;
+        }
+
+        .command-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
+        }
+
+        .command-btn:hover {
+            background: linear-gradient(to bottom, #00aacc, #006688);
+            box-shadow: 0 0 25px rgba(0, 210, 255, 0.6);
+            transform: translateY(-2px);
+        }
+
+        .command-btn:hover::before {
+            transform: translateX(100%);
+        }
+
+        .command-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 0 15px rgba(0, 210, 255, 0.4);
+        }
+
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 20, 35, 0.95);
+            z-index: 3;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            border-radius: 8px;
+        }
+
+        .loading-dots {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .loading-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #00d2ff;
+            animation: dotPulse 1.5s ease-in-out infinite;
+        }
+
+        .loading-dot:nth-child(2) {
+            animation-delay: 0.3s;
+        }
+
+        .loading-dot:nth-child(3) {
+            animation-delay: 0.6s;
+        }
+
+        @keyframes dotPulse {
+
+            0%,
+            100% {
+                transform: scale(0.8);
+                opacity: 0.5;
+            }
+
+            50% {
+                transform: scale(1.2);
+                opacity: 1;
+            }
+        }
+
+        .loading-text {
+            color: #00d2ff;
+            font-size: clamp(12px, 1.8vw, 14px);
+            letter-spacing: 1px;
+        }
+
+        .error-alert {
+            margin-top: 15px;
+            padding: 10px;
+            background: rgba(255, 50, 50, 0.2);
+            border: 1px solid #ff3333;
+            border-radius: 4px;
+            color: #ff6666;
+            font-size: clamp(11px, 1.8vw, 13px);
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .error-alert.show {
+            opacity: 1;
+            animation: errorFlash 0.5s ease-in-out 3;
+        }
+
+        @keyframes errorFlash {
+
+            0%,
+            100% {
+                background: rgba(255, 50, 50, 0.2);
+            }
+
+            50% {
+                background: rgba(255, 50, 50, 0.4);
+            }
+        }
+
+        /* 断点1：平板（iPad，768px+） */
+        @media (min-width: 768px) {
+            body {
+                padding: 30px;
+                /* 平板：登录面板略偏右 */
+                justify-content: flex-end;
+                padding-right: 5%;
+            }
+
+            .command-login {
+                width: clamp(70%, 50vw, 550px);
+            }
+        }
+
+        /* 断点2：PC端（1024px+） */
+        @media (min-width: 1024px) {
+            body {
+                /* PC：登录面板大幅偏右，还原原设计风格 */
+                justify-content: flex-end;
+                padding-right: 10%;
+                padding-left: 0;
+            }
+
+            .command-login {
+                width: clamp(400px, 30vw, 600px);
+            }
+
+            /* PC端增加数据流数量，视觉更丰富 */
+            .data-stream .data-line {
+                width: 3px;
+            }
+        }
+
+        /* 断点3：大屏PC（1440px+） */
+        @media (min-width: 1440px) {
+            body {
+                padding-right: 15%;
+            }
+
+        }
+
+        /* 修复原CSS的注释错误（将注释内容改为不包含嵌套注释符） */
+        /* 原代码中包含无效的 // 注释，已清理并重构为标准 CSS 注释 */
+    </style>
+</head>
+
+<body>
+    <!-- 视频背景：增加poster属性，视频加载前显示占位图 -->
+    <video class="bottom-bg" src="bjvideo.mp4" autoplay loop muted playsinline poster="video-placeholder.jpg"></video>
+
+    <div class="grid-bg"></div>
+
+    <div class="data-stream" id="dataStream"></div>
+
+    <div class="command-login" id="loginPanel">
+        <!-- 系统状态栏 -->
+        <div class="system-status">
+            <div class="status-label">
+                <span class="status-indicator"></span>
+                行空D10控制台 - 待机状态
+            </div>
+            <div class="system-time" id="systemTime">00:00:00</div>
+        </div>
+
+        <!-- 标题区域 -->
+        <div class="command-title">
+            <h1>REMOTE MONITOR COMMAND</h1>
+            <p>行空终端控制中心 V3.0.0</p>
+        </div>
+
+        <!-- 输入区域 -->
+        <div class="terminal-input">
+            <label for="user-id">操作员ID</label>
+            <input type="text" id="user-id" placeholder="请输入操作员编号" autocomplete="off">
+        </div>
+        <div class="terminal-input">
+            <label for="auth-code">授权码</label>
+            <input type="password" id="auth-code" placeholder="请输入访问授权码" autocomplete="off">
+        </div>
+
+        <!-- 登录按钮 -->
+        <button class="command-btn" id="authBtn">验证授权并接入</button>
+
+        <!-- 错误提示 -->
+        <div class="error-alert" id="errorAlert">授权码错误！系统默认授权码为 123456</div>
+    </div>
+
+    <!-- 加载验证层 -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-dots">
+            <div class="loading-dot"></div>
+            <div class="loading-dot"></div>
+            <div class="loading-dot"></div>
+        </div>
+        <div class="loading-text">正在验证授权... 接入指挥中心数据库</div>
+    </div>
+
+    <script>
+        // 生成数据流光效：根据屏幕宽度调整数量，移动端减少，PC增加
+        function createDataStreams() {
+            const container = document.getElementById('dataStream');
+            // 屏幕宽度<768（移动端）：20条；768-1024（平板）：25条；>1024（PC）：35条
+            const screenWidth = window.innerWidth;
+            const lineCount = screenWidth < 768 ? 20 : (screenWidth < 1024 ? 25 : 35);
+
+            for (let i = 0; i < lineCount; i++) {
+                const line = document.createElement('div');
+                line.className = 'data-line';
+
+                const top = Math.random() * 100;
+                const left = Math.random() * 100;
+                const height = Math.random() * 150 + 50;
+                const duration = Math.random() * 3 + 2;
+                const delay = Math.random() * 5;
+
+                line.style.top = `${top}%`;
+                line.style.left = `${left}%`;
+                line.style.height = `${height}px`;
+                line.style.animationDuration = `${duration}s`;
+                line.style.animationDelay = `${delay}s`;
+
+                container.appendChild(line);
+            }
+        }
+
+        // 更新系统时间
+        function updateSystemTime() {
+            const timeEl = document.getElementById('systemTime');
+            // 防抖：避免频繁DOM操作
+            let timer = null;
+            function updateTime() {
+                const now = new Date();
+                const h = now.getHours().toString().padStart(2, '0');
+                const m = now.getMinutes().toString().padStart(2, '0');
+                const s = now.getSeconds().toString().padStart(2, '0');
+                timeEl.textContent = `${h}:${m}:${s}`;
+            }
+            updateTime(); // 初始化
+            timer = setInterval(updateTime, 1000);
+
+            // 页面卸载时清除定时器
+            window.addEventListener('beforeunload', () => clearInterval(timer));
+        }
+
+        // 登录授权逻辑：增加移动端交互优化
+        function initAuth() {
+            const authBtn = document.getElementById('authBtn');
+            const userIdInput = document.getElementById('user-id');
+            const authCodeInput = document.getElementById('auth-code');
+            const errorAlert = document.getElementById('errorAlert');
+            const loadingOverlay = document.getElementById('loadingOverlay');
+
+            authBtn.addEventListener('click', async function () {
+                const userId = userIdInput.value.trim();
+                const authCode = authCodeInput.value.trim();
+
+                // 空值校验
+                if (!userId || !authCode) {
+                    errorAlert.textContent = '操作员ID和授权码不能为空！';
+                    errorAlert.classList.add('show');
+                    setTimeout(() => errorAlert.classList.remove('show'), 3000);
+                    return;
+                }
+
+                // 显示加载层
+                loadingOverlay.style.display = 'flex';
+
+                try {
+                    // 模拟/真实登录验证（替换为你的实际验证逻辑）
+                    // 示例：默认授权码123456，可替换为后端接口请求
+                    const isAuthSuccess = authCode === '123456';
+
+                    // 模拟网络延迟
+                    await new Promise(resolve => setTimeout(resolve, 800));
+
+                    loadingOverlay.style.display = 'none';
+
+                    if (isAuthSuccess) {
+                          sessionStorage.setItem('isLoggedIn', 'true');
+                          window.location.href = 'home.html';
+                    } else {
+                        errorAlert.textContent = '授权码错误！系统默认授权码为 123456';
+                        errorAlert.classList.add('show');
+                        setTimeout(() => errorAlert.classList.remove('show'), 3000);
+                    }
+
+                } catch (error) {
+                    loadingOverlay.style.display = 'none';
+                    errorAlert.textContent = '验证过程中出现错误';
+                    errorAlert.classList.add('show');
+                    setTimeout(() => errorAlert.classList.remove('show'), 3000);
+                }
+            });
+        }
+
+        // 页面加载初始化：增加窗口大小变化监听
+        window.onload = () => {
+            createDataStreams();
+            updateSystemTime();
+            initAuth();
+        };
+
+        // 窗口大小变化时重新生成数据流（适配横竖屏切换）
+        window.addEventListener('resize', () => {
+            const container = document.getElementById('dataStream');
+            container.innerHTML = ''; // 清空原有数据流
+            createDataStreams();
+        });
+
+
+    </script>
+</body>
+
+</html>
